@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Unit Converter</h1>
+  <div class="">
+    <button class="units active">Length</button>
+    <button class="units">Weight</button>
+    <button class="units">Temperature</button>
+  </div>
+
+  <form id="convert_form" method="post">
+
+    <label for="length">Enter the length to convert</label>
+    <input type="text" id="length" name="length">
+    <label for="unit_to_convert_from">Unit to convert from</label>
+    <input type="text" id="unit_to_convert_from" name="unit_to_convert_from">
+    <label for="unit_to_convert_to">Unit to convert to</label>
+    <input type="text" id="unit_to_convert_to" name="unit_to_convert_to">
+    <input type="text" hidden id="unit" value="length" name="unit">
+    <button type="submit">Convert</button>
+  </form>
+
+  <section id="results-page">
+    <p>Result of your calculation</p>
+    <div id="results"></div>
+    <button id="reset">Reset</button>
+  </section>
+  <script src="./app.js" type="module"></script>
+</body>
+</html>
