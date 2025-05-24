@@ -1,76 +1,64 @@
+import express from 'express';
+import path from 'path';
+import bodyParser from 'body-parser';
+import { fileURLToPath } from 'url';
+import { aliases, convertUnit } from './public/js/UnitCalclator.js';
 
-const UNITS = {LENGTH:'length', WEIGHT:'weight', TEMPERATURE:'temperature'};
-const lengthMeasurements ={mm: 0.001, cm: 0.01,m: 1, km: 1000,in: 0.0254, ft: 0.3048,yd: 0.9144, mi: 1609.344};
-const weightMeasurements = {mg: 0.001,g: 1,kg: 1000,oz: 28.3495,lb: 453.592};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const app = express();
 
-export default function calculateUnits(unitsData){
-  const {unit, length,unit_to_convert_to, unit_to_convert_from } = unitsData;
-  const oldLength = length;
-  let results = {}
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  if(unit !== undefined && length !== undefined && unit_to_convert_to !== undefined && unit_to_convert_from !== undefined){
-    try{
-      switch(unit.toLowerCase()){
-        case UNITS.LENGTH:
-          results = convertUnit(true,length, unit_to_convert_to, unit_to_convert_from);
-          break;
-        case UNITS.WEIGHT:
-          results = convertUnit(false, length, unit_to_convert_to, unit_to_convert_from);
-          break;
-        case UNITS.TEMPERATURE:
-          results = convertTemperature(length, unit_to_convert_to, unit_to_convert_from); 
-          break;      
-        }
-      results.oldLength = oldLength; 
-      return results; 
-    }
-    catch(err) {
-      return {message: err.message}
-    }
-  }
-  return {message : "All fields must be field"};
-}
+app.get('/', (req, res)=>{
+  res.render('index.html');
+})
 
-function convertUnit(isLength, length, unit_to_convert_to, unit_to_convert_from){
+app.get('/length', (req,res)=>{
+  res.redirect('/index.html');
+})
 
-  const units = isLength ? lengthMeasurements : weightMeasurements;
- 
-  if(units[unit_to_convert_to] !== undefined && units[unit_to_convert_from] !== undefined){
+app.get('/temperature', (req, res)=>{
+  res.redirect('/pages/temperature.html')
+})
 
-    const valueInMeters = length * units[unit_to_convert_from];
-    const convertedValue = valueInMeters / units[unit_to_convert_to];
-    const results = {length: convertedValue, unit_to_convert_to:unit_to_convert_to, unit_to_convert_from: unit_to_convert_from};
-    return results;
+app.get('/weight', (req, res)=>{
+  res.redirect('/pages/weight.html');
+})
 
-  }
+app.post('/temperature', (req, res)=>{
+  res.render('display');
+})
 
-  if(isLength)  throw new Error("Invalid units. Try using mm, cm, m, km, in, ft, yd, or mi.");
-  else throw new Error("Invalid units. Use mg, g, kg, oz, or lb.");
 
-}
 
-function convertTemperature(length, unit_to_convert_to, unit_to_convert_from) {
+app.post('/weight', (req, res)=>{
+  res.render('display');
+})
 
-  const normalize = {
-    C: v => v,
-    F: v => (v - 32) * 5 / 9,
-    K: v => v - 273.15
-  };
+app.post('/length', (req, res)=>{
 
-  const denormalize = {
-    C: v => v,
-    F: v => (v * 9 / 5) + 32,
-    K: v => v + 273.15
-  };
-
-  if(denormalize[unit_to_convert_from] !== undefined || normalize[unit_to_convert_from] !== undefined 
-    && denormalize[unit_to_convert_to] !== undefined || normalize[unit_to_convert_from] !== undefined){
-    throw new Error("Invalid temperature units. Use C, F, or K.");
+  const {unit_to_convert_from, unit_to_convert_to, length} = req.body;
+  if(!length || !unit_to_convert_from || !unit_to_convert_to){
+    return res.render('error');
   }
 
-  const valueInCelsius = normalize[unit_to_convert_from](length);
-  const convertedValue = denormalize[unit_to_convert_to](valueInCelsius);
-  const results = {length: convertedValue, unit_to_convert_to:unit_to_convert_to, unit_to_convert_from: unit_to_convert_from};
+  const unit_from = aliases[unit_to_convert_from];
+  const unit_to = aliases[unit_to_convert_to];
 
-  return results;
-}
+  if(unit_from && unit_to){
+    const conversion = convertUnit(true, length, unit_to, unit_from);
+    conversion.prevLength = length;
+    return res.render('display',{conversion:conversion});
+  }
+
+  return res.render('error');
+})
+
+app.listen(5000, ()=>{
+  console.log('Server running on port 5000')
+})

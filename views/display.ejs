@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles/style.css">
+  <title>Display results</title>
+</head>
+<body>
+  <section class="container">
+    <h1>Unit Converter</h1>
+    <div class="unit-options">
+      <a class="units active" href="/length">Length</a>
+      <a class="units" href="/weight">Weight</a>
+      <a class="units" href="/temperature">Temperature</a>
+    </div>
+    <% if (conversion) { %>
+      <h3>Result of your calculation</h3>
+      <div class="results">
+        <span><%= conversion.prevLength %></span>
+        <span> <%= conversion.unit_to_convert_from %> = </span>
+        <span><%= conversion.length %></span>
+        <span><%= conversion.unit_to_convert_to %></span>
+      </div>
+      <button onclick="location.reload()" class="reset-btn">Reset</button>
+    <% } %>
+  </section>
+</body>
+</html>

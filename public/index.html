@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./styles/style.css">
+  <title>Document</title>
+</head>
+<body>
+  <section class="container">
+    <h1>Unit Converter</h1>
+    <div class="unit-options">
+      <a class="units active" href="/length">Length</a>
+      <a class="units" href="/weight">Weight</a>
+      <a class="units" href="/temperature">Temperature</a>
+    </div>
+  
+    <form method="post" class="unit-convetor-form" action="/length">
+      <div>
+        <label for="length">Enter the length to convert</label>
+        <input type="text" id="length" name="length">
+      </div>
+      <div>
+        <label for="unit_to_convert_from">Unit to convert from</label>
+        <input type="text" id="unit_to_convert_from" name="unit_to_convert_from">
+      </div>
+      <div>
+        <label for="unit_to_convert_to">Unit to convert to</label>
+        <input type="text" id="unit_to_convert_to" name="unit_to_convert_to">
+      </div>
+      <button type="submit">Convert</button>
+    </form>
+
+  </section>
+  <script src="./app.js" type="module"></script>
+</body>
+</html>
